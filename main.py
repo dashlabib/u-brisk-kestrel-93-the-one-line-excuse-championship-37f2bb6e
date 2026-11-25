@@ -59,6 +59,10 @@ def validate(path=OUTPUT_PATH):
         text = raw.decode("utf-8")
     except UnicodeDecodeError:
         return ["entry is not valid UTF-8"]
+    if text.encode("utf-8") != raw:
+        failures.append("entry does not round-trip as UTF-8")
+    if any(ord(ch) < 0x20 and ch not in "\t" for ch in text):
+        failures.append("entry contains a control character")
 
     if not text:
         failures.append("entry is empty")
